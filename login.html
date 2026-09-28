@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Doctor Login | Smruti Dental</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  body { background: #f5f7fa; }
+  .box {
+    max-width: 400px; margin: 80px auto; background: #fff;
+    padding: 32px; border-radius: 12px; border: 1px solid #e5e8ec;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+  }
+  .box h1 { font-size: 1.4rem; margin-bottom: 6px; color: #0f3d73; }
+  .box p.sub { color: #666; font-size: 0.9rem; margin-bottom: 20px; }
+  .box input {
+    width: 100%; padding: 12px; border: 1px solid #ddd;
+    border-radius: 8px; margin-bottom: 12px; font-size: 1rem;
+  }
+  .box button { width: 100%; padding: 12px; }
+  #st { margin-top: 12px; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<div class="box">
+  <h1>Doctor Login</h1>
+  <p class="sub">Smruti Dental · Staff only</p>
+  <input type="email" id="email" placeholder="Email" autofocus>
+  <input type="password" id="password" placeholder="Password">
+  <button class="btn btn-primary" id="btn">Login</button>
+  <p id="st"></p>
+  <p style="margin-top:16px; font-size:0.85rem;"><a href="index.html" style="color:#1a56a0;">← Website</a></p>
+  <p style="margin-top:8px; font-size:0.8rem; color:#888;">
+    No account? Create user in Supabase → Authentication → Users
+  </p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+<script>
+document.getElementById('btn').onclick = async function() {
+  var st = document.getElementById('st');
+  var email = document.getElementById('email').value.trim();
+  var password = document.getElementById('password').value;
+  if (!email || !password) {
+    st.textContent = 'Enter email and password';
+    st.style.color = 'red';
+    return;
+  }
+  st.textContent = 'Logging in...';
+  st.style.color = '#666';
+  if (!window.sb) {
+    st.textContent = 'Supabase failed to load. Check internet.';
+    st.style.color = 'red';
+    return;
+  }
+  var r = await sb.auth.signInWithPassword({ email: email, password: password });
+  if (r.error) {
+    st.textContent = 'Login failed: ' + r.error.message;
+    st.style.color = 'red';
+  } else {
+    st.textContent = 'OK — opening Admin...';
+    st.style.color = 'green';
+    window.location.href = 'admin.html';
+  }
+};
+// Enter key
+document.getElementById('password').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') document.getElementById('btn').click();
+});
+</script>
+</body>
+</html>

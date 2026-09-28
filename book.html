@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book Appointment | Smruti Dental</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="topbar"><div class="wrap">
+  <div class="topbar-left">
+    <span>📍 GF-42, Aakash Residency, New Ranip, Ahmedabad</span>
+    <a href="https://www.google.com/maps/dir/?api=1&destination=Aakash+Residency+New+Ranip+Ahmedabad" target="_blank">Open Map</a>
+  </div>
+  <div class="topbar-right"><a href="tel:+919510358056">📞 +91 95103 58056</a></div>
+</div></div>
+<header class="header"><div class="wrap">
+  <a href="index.html" class="logo"><img src="images/logo.jpg" alt=""> SMRUTI Dental</a>
+  <nav class="nav">
+    <a href="index.html">Home</a>
+    <a href="services.html">Services</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="about.html">About</a>
+    <a href="book.html" class="active">Book Appointment</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+  <a href="tel:+919510358056" class="btn btn-call">Call</a>
+</div></header>
+
+<section class="section">
+  <div class="wrap" style="display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:start;">
+    <div>
+      <h2>Book My Appointment</h2>
+      <p class="sub">Fill the form. Details go to clinic Admin panel + optional WhatsApp.</p>
+      <div class="form-box">
+        <form id="bookForm">
+          <label>Full Name *</label>
+          <input type="text" id="name" required placeholder="Your name">
+          <label>Phone Number *</label>
+          <input type="tel" id="phone" required placeholder="10-digit mobile">
+          <label>Service</label>
+          <select id="service">
+            <option value="">Select service</option>
+            <option>Dental Implants</option>
+            <option>Root Canal</option>
+            <option>Braces / Orthodontics</option>
+            <option>Teeth Whitening</option>
+            <option>Crowns & Bridges</option>
+            <option>General Checkup / Scaling</option>
+            <option>Other</option>
+          </select>
+          <label>Preferred Date</label>
+          <input type="date" id="date">
+          <label>Message (optional)</label>
+          <textarea id="msg" placeholder="Any specific concern..."></textarea>
+          <button type="submit" class="btn btn-primary" style="width:100%;">Submit Request</button>
+        </form>
+        <p id="formStatus" style="margin-top:12px; font-size:0.9rem;"></p>
+      </div>
+    </div>
+    <div>
+      <h2 style="font-size:1.3rem;">Or contact directly</h2>
+      <div class="info-list" style="margin-top:20px;">
+        <b>WHATSAPP</b>
+        <p><a href="https://wa.me/919510358056" target="_blank" style="color:var(--blue);font-weight:600;">+91 95103 58056</a></p>
+        <b>CALL</b>
+        <p><a href="tel:+919510358056" style="color:var(--blue);font-weight:600;">+91 95103 58056</a><br>
+        <a href="tel:+919033965433" style="color:var(--blue);font-weight:600;">+91 90339 65433</a></p>
+        <b>TIMINGS</b>
+        <p>Mon–Sat: 9:30 AM – 1:00 PM<br>4:30 PM – 8:30 PM</p>
+        <b>ADDRESS</b>
+        <p>GF-42, Aakash Residency, Opp. Indraprasth 9, New Ranip, Ahmedabad</p>
+      </div>
+      <a href="https://wa.me/919510358056?text=Hi%2C%20I%20want%20to%20book%20an%20appointment" class="btn btn-green" target="_blank">WhatsApp Now</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer"><div class="wrap">
+  <div class="footer-grid">
+    <div><h4>SMRUTI Dental</h4><p>Multispeciality Dental Clinic & Implant Center</p></div>
+    <div><h4>Links</h4><p><a href="index.html">Home</a></p><p><a href="book.html">Book</a></p></div>
+    <div><h4>Phone</h4><p><a href="tel:+919510358056">+91 95103 58056</a></p></div>
+    <div><h4>Address</h4><p>GF-42, Aakash Residency, New Ranip</p></div>
+  </div>
+  <div class="footer-bottom">© 2026 Smruti Dental</div>
+</div></footer>
+<div class="float-btns">
+  <a href="https://wa.me/919510358056" class="float-wa" target="_blank">💬</a>
+  <a href="book.html" class="float-book">BOOK</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+<script>
+document.getElementById('bookForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  var st = document.getElementById('formStatus');
+  var name = document.getElementById('name').value.trim();
+  var phone = document.getElementById('phone').value.trim();
+  var service = document.getElementById('service').value;
+  var date = document.getElementById('date').value;
+  var msg = document.getElementById('msg').value.trim();
+
+  if (!name || !phone) {
+    st.textContent = 'Name and phone are required';
+    st.style.color = 'red';
+    return;
+  }
+
+  st.textContent = 'Saving appointment...';
+  st.style.color = '#666';
+
+  var saved = false;
+  if (window.sb) {
+    try {
+      var r = await sb.from('appointments').insert({
+        customer_name: name,
+        phone: phone,
+        service: service || null,
+        preferred_date: date || null,
+        message: msg || null,
+        status: 'new',
+        created_at: new Date().toISOString()
+      }).select('id').single();
+
+      if (r.error) {
+        st.textContent = 'Could not save to clinic system: ' + r.error.message + '. Opening WhatsApp...';
+        st.style.color = '#b45309';
+      } else {
+        saved = true;
+        st.textContent = 'Appointment saved! Ref ID: ' + (r.data && r.data.id ? String(r.data.id).slice(0, 8) : 'OK') + '. Opening WhatsApp...';
+        st.style.color = 'green';
+      }
+    } catch (err) {
+      st.textContent = 'Save error. Opening WhatsApp...';
+      st.style.color = '#b45309';
+    }
+  }
+
+  var text = 'Hi, I want to book an appointment at Smruti Dental.%0A%0AName: ' + encodeURIComponent(name) +
+    '%0APhone: ' + encodeURIComponent(phone) +
+    '%0AService: ' + encodeURIComponent(service || 'Not specified') +
+    '%0ADate: ' + encodeURIComponent(date || 'Flexible') +
+    '%0AMessage: ' + encodeURIComponent(msg || '-');
+  setTimeout(function() {
+    window.open('https://wa.me/919510358056?text=' + text, '_blank');
+  }, saved ? 600 : 300);
+});
+</script>
+</body>
+</html>

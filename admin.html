@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin | Smruti Dental</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  body { background: #f0f2f5; }
+  .admin-header { background: #0f3d73; color: #fff; padding: 14px 0; margin-bottom: 16px; }
+  .admin-header .wrap { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+  .tabs button {
+    padding: 10px 14px; border: 1px solid #ddd; background: #fff; border-radius: 8px;
+    cursor: pointer; font-weight: 600; font-size: 0.8rem;
+  }
+  .tabs button.active { background: #1a56a0; color: #fff; border-color: #1a56a0; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .card {
+    background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 16px;
+    border: 1px solid #e5e8ec;
+  }
+  .card h2 { font-size: 1.05rem; margin-bottom: 12px; color: #0f3d73; }
+  .slot-row {
+    display: grid; grid-template-columns: 120px 1fr; gap: 12px; align-items: start;
+    padding: 12px 0; border-bottom: 1px solid #eee;
+  }
+  @media (max-width: 640px) { .slot-row { grid-template-columns: 1fr; } }
+  .slot-preview {
+    width: 120px; min-height: 80px; background: #f5f5f5; border-radius: 8px;
+    overflow: hidden; display: flex; align-items: center; justify-content: center;
+    border: 1px dashed #ccc;
+  }
+  .slot-preview img { max-width: 100%; max-height: 100px; object-fit: contain; }
+  .slot-controls label { font-size: 0.75rem; font-weight: 600; display: block; margin: 4px 0 2px; }
+  .slot-controls select, .slot-controls input {
+    width: 100%; max-width: 260px; padding: 8px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 4px;
+  }
+  .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
+  .media-item { border: 1px solid #e5e8ec; border-radius: 8px; overflow: hidden; background: #fff; }
+  .media-item img { width: 100%; aspect-ratio: 1; object-fit: contain; background: #f8f8f8; }
+  .media-item .meta { padding: 6px; font-size: 0.7rem; color: #555; }
+  .status { font-size: 0.85rem; margin-top: 6px; }
+  .badge { display: inline-block; background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
+  #gate { text-align: center; padding: 40px 16px; }
+  .hint { font-size: 0.75rem; color: #888; margin-top: 4px; }
+  .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+  @media (max-width: 500px) { .stats-row { grid-template-columns: 1fr; } }
+  .stat-box { background: #fff; border: 1px solid #e5e8ec; border-radius: 10px; padding: 14px; text-align: center; }
+  .stat-box b { display: block; font-size: 1.5rem; color: #0f3d73; }
+  .stat-box span { font-size: 0.75rem; color: #666; }
+</style>
+</head>
+<body>
+
+<div class="admin-header">
+  <div class="wrap">
+    <div>
+      <strong>Smruti Admin</strong>
+      <span class="badge" style="margin-left:6px;">Appointments + Photos</span>
+    </div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <a href="index.html" class="btn btn-outline" style="color:#fff;border-color:#fff;background:transparent;padding:8px 12px;font-size:0.8rem;">Website</a>
+      <button class="btn btn-red" style="padding:8px 12px;font-size:0.8rem;" onclick="doLogout()">Logout</button>
+    </div>
+  </div>
+</div>
+
+<div id="gate" class="wrap">
+  <p>Checking login…</p>
+  <p style="margin-top:12px;"><a href="login.html" class="btn btn-primary">Login</a></p>
+</div>
+
+<div id="adminBody" class="wrap" style="display:none; padding-bottom:48px;">
+
+  <div class="tabs">
+    <button class="active" data-tab="appointments" onclick="showTab('appointments')">Appointments</button>
+    <button data-tab="slots" onclick="showTab('slots')">Page Images</button>
+    <button data-tab="gallery" onclick="showTab('gallery')">Gallery</button>
+    <button data-tab="setup" onclick="showTab('setup')">Setup SQL</button>
+  </div>
+
+  <!-- APPOINTMENTS -->
+  <div id="tab-appointments" class="panel active">
+    <div class="stats-row">
+      <div class="stat-box"><b id="statTotal">0</b><span>Total bookings</span></div>
+      <div class="stat-box"><b id="statNew">0</b><span>New</span></div>
+      <div class="stat-box"><b id="statDone">0</b><span>Done</span></div>
+    </div>
+    <div class="card">
+      <h2>Customer appointments</h2>
+      <p class="hint">From Book Appointment form. Unique ID for each customer request.</p>
+      <button class="btn btn-outline" style="margin-bottom:12px;padding:8px 12px;font-size:0.8rem;" onclick="loadAppointments()">Refresh</button>
+      <div class="appt-scroll">
+        <table class="appt-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>Service</th>
+              <th>Date</th>
+              <th>Message</th>
+              <th>Status</th>
+              <th>Booked at</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="apptBody">
+            <tr><td colspan="9">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLOTS -->
+  <div id="tab-slots" class="panel">
+    <div class="card">
+      <h2>Page image slots</h2>
+      <p class="hint">Natural = no crop. You choose every photo.</p>
+      <div id="slotsList"></div>
+    </div>
+  </div>
+
+  <!-- GALLERY -->
+  <div id="tab-gallery" class="panel">
+    <div class="card">
+      <h2>Before & After / Media</h2>
+      <input type="file" id="baFile" accept="image/*">
+      <input type="text" id="baCaption" placeholder="Caption" style="max-width:260px;margin:8px 0;padding:8px;width:100%;border:1px solid #ddd;border-radius:6px;">
+      <button class="btn btn-primary" onclick="uploadBA()">Upload</button>
+      <p class="status" id="baStatus"></p>
+      <div id="baList" style="margin-top:12px;"></div>
+    </div>
+  </div>
+
+  <!-- SETUP -->
+  <div id="tab-setup" class="panel">
+    <div class="card">
+      <h2>Run in Supabase SQL Editor (once)</h2>
+      <pre style="background:#1a1a1a;color:#9f9;padding:14px;border-radius:8px;overflow:auto;font-size:0.72rem;white-space:pre-wrap;">-- Appointments table
+create table if not exists public.appointments (
+  id uuid primary key default gen_random_uuid(),
+  customer_name text not null,
+  phone text not null,
+  service text,
+  preferred_date date,
+  message text,
+  status text default 'new',
+  created_at timestamptz default now()
+);
+alter table public.appointments enable row level security;
+create policy "Public insert appointments" on public.appointments for insert with check (true);
+create policy "Auth read appointments" on public.appointments for select using (auth.role() = 'authenticated');
+create policy "Auth update appointments" on public.appointments for update using (auth.role() = 'authenticated');
+create policy "Auth delete appointments" on public.appointments for delete using (auth.role() = 'authenticated');
+
+-- site_images (if not created)
+create table if not exists public.site_images (
+  id uuid primary key default gen_random_uuid(),
+  slot_key text unique not null,
+  photo_url text,
+  alt_text text default '',
+  display_mode text default 'natural',
+  object_position text default 'center center',
+  updated_at timestamptz default now()
+);
+alter table public.site_images enable row level security;
+create policy "Public read site_images" on public.site_images for select using (true);
+create policy "Auth all site_images" on public.site_images for all using (auth.role() = 'authenticated');
+</pre>
+      <p class="hint">Also need Storage bucket named <strong>gallery</strong> (public).</p>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+<script>
+var SLOTS = [
+  { key: 'home_hero', label: 'Home — Hero' },
+  { key: 'home_doctor', label: 'Home — Doctor' },
+  { key: 'home_clinic1', label: 'Home — Clinic 01' },
+  { key: 'home_clinic2', label: 'Home — Clinic 02' },
+  { key: 'about_main', label: 'About — Main' },
+  { key: 'about_side', label: 'About — Side' }
+];
+var slotData = {};
+
+function showTab(id) {
+  document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.tabs button').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById('tab-' + id).classList.add('active');
+  document.querySelector('[data-tab="'+id+'"]').classList.add('active');
+}
+
+async function checkAuth() {
+  if (!sb) {
+    document.getElementById('gate').innerHTML = '<p>Supabase not loaded.</p><a href="login.html" class="btn btn-primary">Login</a>';
+    return;
+  }
+  var r = await sb.auth.getSession();
+  if (r.data && r.data.session) {
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('adminBody').style.display = 'block';
+    loadAppointments();
+    loadSlots();
+    loadBA();
+  } else {
+    document.getElementById('gate').innerHTML = '<p>Please login.</p><a href="login.html" class="btn btn-primary">Login</a>';
+  }
+}
+
+async function doLogout() {
+  if (sb) await sb.auth.signOut();
+  location.href = 'login.html';
+}
+
+function shortId(id) {
+  if (!id) return '-';
+  return String(id).slice(0, 8);
+}
+
+async function loadAppointments() {
+  var body = document.getElementById('apptBody');
+  body.innerHTML = '<tr><td colspan="9">Loading...</td></tr>';
+  var r = await sb.from('appointments').select('*').order('created_at', { ascending: false });
+  if (r.error) {
+    body.innerHTML = '<tr><td colspan="9" style="color:red;">Error: ' + r.error.message + ' — Run Setup SQL for appointments table.</td></tr>';
+    return;
+  }
+  if (!r.data || !r.data.length) {
+    body.innerHTML = '<tr><td colspan="9">No appointments yet. When customers submit Book form, they appear here.</td></tr>';
+    document.getElementById('statTotal').textContent = '0';
+    document.getElementById('statNew').textContent = '0';
+    document.getElementById('statDone').textContent = '0';
+    return;
+  }
+  var total = r.data.length;
+  var nNew = r.data.filter(function(a){ return a.status === 'new'; }).length;
+  var nDone = r.data.filter(function(a){ return a.status === 'done'; }).length;
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statNew').textContent = nNew;
+  document.getElementById('statDone').textContent = nDone;
+
+  body.innerHTML = r.data.map(function(a) {
+    var stClass = a.status === 'done' ? 'status-done' : 'status-new';
+    var when = a.created_at ? new Date(a.created_at).toLocaleString() : '-';
+    var pdate = a.preferred_date || '-';
+    return '<tr>' +
+      '<td><code>' + shortId(a.id) + '</code></td>' +
+      '<td><strong>' + (a.customer_name || '') + '</strong></td>' +
+      '<td><a href="tel:' + (a.phone||'') + '">' + (a.phone||'') + '</a></td>' +
+      '<td>' + (a.service || '-') + '</td>' +
+      '<td>' + pdate + '</td>' +
+      '<td>' + (a.message || '-') + '</td>' +
+      '<td class="' + stClass + '">' + (a.status || 'new') + '</td>' +
+      '<td>' + when + '</td>' +
+      '<td style="white-space:nowrap;">' +
+        '<button class="btn btn-outline" style="padding:4px 8px;font-size:0.7rem;margin:2px;" onclick="setStatus(\'' + a.id + '\',\'done\')">Done</button> ' +
+        '<button class="btn btn-outline" style="padding:4px 8px;font-size:0.7rem;margin:2px;" onclick="setStatus(\'' + a.id + '\',\'new\')">New</button> ' +
+        '<button class="btn btn-red" style="padding:4px 8px;font-size:0.7rem;margin:2px;" onclick="delAppt(\'' + a.id + '\')">Del</button>' +
+      '</td></tr>';
+  }).join('');
+}
+
+async function setStatus(id, status) {
+  await sb.from('appointments').update({ status: status }).eq('id', id);
+  loadAppointments();
+}
+
+async function delAppt(id) {
+  if (!confirm('Delete this appointment?')) return;
+  await sb.from('appointments').delete().eq('id', id);
+  loadAppointments();
+}
+
+async function loadSlots() {
+  var r = await sb.from('site_images').select('*');
+  slotData = {};
+  if (r.data) r.data.forEach(function(row){ slotData[row.slot_key] = row; });
+  var html = '';
+  SLOTS.forEach(function(s) {
+    var d = slotData[s.key] || {};
+    var url = d.photo_url || '';
+    html += '<div class="slot-row"><div class="slot-preview">'+(url?'<img src="'+url+'">':'<span style="color:#aaa;font-size:0.75rem;">Empty</span>')+'</div><div class="slot-controls">';
+    html += '<strong>'+s.label+'</strong>';
+    html += '<label>Upload</label><input type="file" accept="image/*" id="file_'+s.key+'">';
+    html += '<label>Mode</label><select id="mode_'+s.key+'">';
+    html += '<option value="natural">Natural</option><option value="contain">Contain</option><option value="cover">Cover</option></select>';
+    html += '<button class="btn btn-primary" style="margin-top:6px;padding:8px 12px;font-size:0.8rem;" onclick="saveSlot(\''+s.key+'\')">Save</button>';
+    html += '<p class="status" id="st_'+s.key+'"></p></div></div>';
+  });
+  document.getElementById('slotsList').innerHTML = html;
+}
+
+async function saveSlot(key) {
+  var st = document.getElementById('st_'+key);
+  var fileInput = document.getElementById('file_'+key);
+  var mode = document.getElementById('mode_'+key).value;
+  var photoUrl = (slotData[key] && slotData[key].photo_url) || '';
+  st.textContent = 'Saving...'; st.style.color = '#666';
+  if (fileInput.files[0]) {
+    var file = fileInput.files[0];
+    var name = 'slot_'+key+'_'+Date.now()+'_'+file.name.replace(/[^a-zA-Z0-9.]/g,'_');
+    var up = await sb.storage.from('gallery').upload(name, file);
+    if (up.error) { st.textContent = up.error.message; st.style.color = 'red'; return; }
+    photoUrl = sb.storage.from('gallery').getPublicUrl(name).data.publicUrl;
+  }
+  if (!photoUrl) { st.textContent = 'Choose image'; st.style.color = 'red'; return; }
+  var payload = { slot_key: key, photo_url: photoUrl, display_mode: mode, object_position: 'center center', updated_at: new Date().toISOString() };
+  var r = await sb.from('site_images').upsert(payload, { onConflict: 'slot_key' });
+  if (r.error) { st.textContent = r.error.message; st.style.color = 'red'; }
+  else { st.textContent = 'Saved'; st.style.color = 'green'; slotData[key] = payload; }
+}
+
+async function uploadBA() {
+  var f = document.getElementById('baFile');
+  var cap = document.getElementById('baCaption').value;
+  var st = document.getElementById('baStatus');
+  if (!f.files[0]) { st.textContent = 'Choose file'; st.style.color = 'red'; return; }
+  st.textContent = 'Uploading...'; st.style.color = '#666';
+  var file = f.files[0];
+  var name = 'ba_'+Date.now()+'_'+file.name.replace(/[^a-zA-Z0-9.]/g,'_');
+  var up = await sb.storage.from('gallery').upload(name, file);
+  if (up.error) { st.textContent = up.error.message; st.style.color = 'red'; return; }
+  var url = sb.storage.from('gallery').getPublicUrl(name).data.publicUrl;
+  var ins = await sb.from('gallery').insert({ photo_url: url, caption: cap || '', created_at: new Date().toISOString() });
+  if (ins.error) { st.textContent = ins.error.message; st.style.color = 'red'; }
+  else { st.textContent = 'OK'; st.style.color = 'green'; f.value=''; loadBA(); }
+}
+
+async function loadBA() {
+  var r = await sb.from('gallery').select('*').order('created_at', { ascending: false });
+  var list = document.getElementById('baList');
+  if (!r.data || !r.data.length) { list.innerHTML = '<p style="color:#888;">Empty</p>'; return; }
+  list.innerHTML = r.data.map(function(item) {
+    return '<div style="display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid #eee;">'+
+      '<img src="'+item.photo_url+'" style="width:56px;height:56px;object-fit:contain;background:#f5f5f5;border-radius:6px;">'+
+      '<span style="flex:1;font-size:0.85rem;">'+(item.caption||'')+'</span>'+
+      '<button class="btn btn-red" style="padding:4px 8px;font-size:0.75rem;" onclick="delBA(\''+item.id+'\')">Del</button></div>';
+  }).join('');
+}
+
+async function delBA(id) {
+  if (!confirm('Delete?')) return;
+  await sb.from('gallery').delete().eq('id', id);
+  loadBA();
+}
+
+checkAuth();
+</script>
+</body>
+</html>
