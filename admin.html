@@ -197,19 +197,36 @@ function showTab(id) {
 }
 
 async function checkAuth() {
-  if (!sb) {
-    document.getElementById('gate').innerHTML = '<p>Supabase not loaded.</p><a href="login.html" class="btn btn-primary">Login</a>';
-    return;
-  }
-  var r = await sb.auth.getSession();
-  if (r.data && r.data.session) {
-    document.getElementById('gate').style.display = 'none';
-    document.getElementById('adminBody').style.display = 'block';
-    loadAppointments();
-    loadSlots();
-    loadBA();
-  } else {
-    document.getElementById('gate').innerHTML = '<p>Please login.</p><a href="login.html" class="btn btn-primary">Login</a>';
+  var gate = document.getElementById('gate');
+  try {
+    if (!window.sb) {
+      gate.innerHTML = '<p>Supabase not loaded. Check internet / js/supabase-config.js</p><p style="margin-top:12px;"><a href="login.html" class="btn btn-primary">Go to Login</a></p>';
+      return;
+    }
+    gate.innerHTML = '<p>Checking login…</p>';
+    var r = await Promise.race([
+      sb.auth.getSession(),
+      new Promise(function(_, reject){ setTimeout(function(){ reject(new Error('timeout')); }, 10000); })
+    ]);
+    var session = r && r.data && r.data.session;
+    if (!session) {
+      // one more try with getUser
+      try {
+        var u = await sb.auth.getUser();
+        if (u && u.data && u.data.user) session = true;
+      } catch (e2) {}
+    }
+    if (session) {
+      document.getElementById('gate').style.display = 'none';
+      document.getElementById('adminBody').style.display = 'block';
+      loadAppointments();
+      loadSlots();
+      loadBA();
+    } else {
+      gate.innerHTML = '<p>Please login to open Admin Panel.</p><p style="margin-top:16px;"><a href="login.html" class="btn btn-primary">Go to Login</a></p><p style="margin-top:12px;font-size:0.85rem;color:#666;">Create user in Supabase → Authentication → Users if you have no account.</p>';
+    }
+  } catch (err) {
+    gate.innerHTML = '<p>Login check failed: ' + (err && err.message ? err.message : 'error') + '</p><p style="margin-top:16px;"><a href="login.html" class="btn btn-primary">Go to Login</a></p>';
   }
 }
 
@@ -259,8 +276,11 @@ async function loadAppointments() {
       '<td class="' + stClass + '">' + (a.status || 'new') + '</td>' +
       '<td>' + when + '</td>' +
       '<td style="white-space:nowrap;">' +
-        '<button class="btn btn-outline" style="padding:4px 8px;font-size:0.7rem;margin:2px;" onclick="setStatus('' + a.id + '','done')">Done</button> ' +
         '<button class="btn btn-outline" style="padding:4px 8px;font-size:0.7rem;margin:2px;" onclick="setStatus(\'' + a.id + '\',\'new\')">New</button> ' +
+        '<button class="btn btn-outline" style="padding:4px 8px;font-size:0.7rem;margin:2px;" onclick="setStatus(\'' + a.id + '\',\'contacted\')">Contacted</button> ' +
+        '<button class="btn btn-outline" style="padding:4px 8px;font-size:0.7rem;margin:2px;" onclick="setStatus(\'' + a.id + '\',\'done\')">Done</button> ' +
+        '<a class="btn btn-green" style="padding:4px 8px;font-size:0.7rem;margin:2px;" href="https://wa.me/91' + String(a.phone||'').replace(/^\+?91/,'').replace(/\D/g,'') + '" target="_blank">WA</a> ' +
+        '<a class="btn btn-call" style="padding:4px 8px;font-size:0.7rem;margin:2px;" href="tel:+91' + String(a.phone||'').replace(/^\+?91/,'').replace(/\D/g,'') + '">Call</a> ' +
         '<button class="btn btn-red" style="padding:4px 8px;font-size:0.7rem;margin:2px;" onclick="delAppt(\'' + a.id + '\')">Del</button>' +
       '</td></tr>';
   }).join('');
