@@ -259,7 +259,7 @@ async function loadAppointments() {
       '<td class="' + stClass + '">' + (a.status || 'new') + '</td>' +
       '<td>' + when + '</td>' +
       '<td style="white-space:nowrap;">' +
-        '<button class="btn btn-outline" style="padding:4px 8px;font-size:0.7rem;margin:2px;" onclick="setStatus(\'' + a.id + '\',\'done\')">Done</button> ' +
+        '<button class="btn btn-outline" style="padding:4px 8px;font-size:0.7rem;margin:2px;" onclick="setStatus('' + a.id + '','done')">Done</button> ' +
         '<button class="btn btn-outline" style="padding:4px 8px;font-size:0.7rem;margin:2px;" onclick="setStatus(\'' + a.id + '\',\'new\')">New</button> ' +
         '<button class="btn btn-red" style="padding:4px 8px;font-size:0.7rem;margin:2px;" onclick="delAppt(\'' + a.id + '\')">Del</button>' +
       '</td></tr>';

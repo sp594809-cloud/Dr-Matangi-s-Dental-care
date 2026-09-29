@@ -3,63 +3,71 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gallery | Smruti Dental</title>
+<title>Before & After Gallery | Smruti Dental, New Ranip Ahmedabad</title>
+<meta name="description" content="Before and after dental treatment results at Smruti Multispeciality Dental Clinic & Implant Center, New Ranip, Ahmedabad. Patient photos shared with consent.">
+<meta property="og:title" content="Gallery | Smruti Dental, New Ranip">
+<meta property="og:description" content="Before and after treatment results from Smruti Dental Clinic, New Ranip, Ahmedabad.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="images/hero-clinic.jpg">
+<link rel="icon" href="images/logo.jpg" type="image/jpeg">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<div class="topbar"><div class="wrap">
-  <div class="topbar-left"><span>📍 New Ranip, Ahmedabad</span>
-  <a href="https://www.google.com/maps/dir/?api=1&destination=Aakash+Residency+New+Ranip+Ahmedabad" target="_blank">Map</a></div>
-  <div class="topbar-right"><a href="tel:+919510358056">📞 +91 95103 58056</a></div>
-</div></div>
-<header class="header"><div class="wrap">
-  <a href="index.html" class="logo"><img src="images/logo.jpg" alt=""> SMRUTI Dental</a>
-  <nav class="nav">
-    <a href="index.html">Home</a><a href="services.html">Services</a>
-    <a href="gallery.html" class="active">Gallery</a><a href="about.html">About</a>
-    <a href="book.html">Book Appointment</a><a href="contact.html">Contact</a>
-  </nav>
-  <a href="tel:+919510358056" class="btn btn-call">Call</a>
-</div></header>
-<section class="section"><div class="wrap">
-  <h2>Before & After Gallery</h2>
-  <p class="sub">Real treatment results from Smruti Dental</p>
-  <div class="gal-grid" id="galleryGrid">
-    <p style="color:#888;">Loading photos...</p>
+<div class="topbar" id="site-topbar"></div>
+<header class="header" id="site-header"></header>
+
+<main>
+<section class="section">
+  <div class="wrap">
+    <h1 style="font-size:1.75rem;font-weight:800;color:var(--blue-dk);margin-bottom:8px;">Before &amp; After Gallery</h1>
+    <p class="sub">Treatment results from Smruti Multispeciality Dental Clinic &amp; Implant Center, New Ranip.</p>
+    <p class="gallery-note">Photos are shared with patient consent. Individual results vary. Treatment plans are confirmed after examination.</p>
+    <div class="gal-grid" id="galleryGrid" role="status" aria-live="polite">
+      <p style="color:#666;">Loading photos…</p>
+    </div>
   </div>
-</div></section>
-<footer class="footer"><div class="wrap">
-  <div class="footer-grid">
-    <div><h4>SMRUTI Dental</h4><p>New Ranip, Ahmedabad</p></div>
-    <div><h4>Links</h4><p><a href="index.html">Home</a></p><p><a href="book.html">Book</a></p></div>
-    <div><h4>Phone</h4><p><a href="tel:+919510358056">+91 95103 58056</a></p></div>
-    <div><h4>Address</h4><p>GF-42, Aakash Residency, New Ranip</p></div>
-  </div>
-  <div class="footer-bottom">© 2026 Smruti Dental</div>
-</div></footer>
-<div class="float-btns">
-  <a href="https://wa.me/919510358056" class="float-wa" target="_blank">💬</a>
-  <a href="book.html" class="float-book">BOOK</a>
-</div>
+</section>
+</main>
+
+<footer class="footer" id="site-footer"></footer>
+<div class="float-btns" id="site-floats"></div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase-config.js"></script>
+<script src="js/site.js"></script>
 <script>
-async function loadGal() {
+(function () {
   var grid = document.getElementById('galleryGrid');
-  if (!sb) {
-    grid.innerHTML = '<p style="color:#888;">Photos will show after Admin uploads to Gallery.</p>';
-    return;
+  var FALLBACK = 'Photos coming soon. Call us to see our work.';
+  var done = false;
+  function showMessage(msg) {
+    if (done) return;
+    done = true;
+    grid.innerHTML = '<p style="color:#666;grid-column:1/-1;">' + msg + '</p>' +
+      '<p style="grid-column:1/-1;margin-top:12px;"><a class="btn btn-primary" href="tel:+919510358056">Call +91 95103 58056</a> ' +
+      '<a class="btn btn-outline" href="contact.html">Contact</a></p>';
   }
-  var r = await sb.from('gallery').select('*').order('created_at', { ascending: false });
-  if (r.error || !r.data || r.data.length === 0) {
-    grid.innerHTML = '<p style="color:#888;">No before/after photos yet. Doctor can upload from Admin Panel.</p>';
-    return;
+  var timeoutId = setTimeout(function () {
+    if (!done) showMessage(FALLBACK + ' (Loading took too long.)');
+  }, 8000);
+  async function loadGal() {
+    try {
+      if (!window.sb) { clearTimeout(timeoutId); showMessage(FALLBACK); return; }
+      var r = await sb.from('gallery').select('*').order('created_at', { ascending: false });
+      clearTimeout(timeoutId);
+      if (r.error || !r.data || r.data.length === 0) { showMessage(FALLBACK); return; }
+      done = true;
+      grid.innerHTML = r.data.map(function (item) {
+        var cap = (item.caption || 'Treatment result').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        return '<div class="gal-item"><img src="' + (item.photo_url || '') + '" alt="' + cap + ' — Smruti Dental New Ranip" loading="lazy" width="400" height="300"><p>' + cap + '</p></div>';
+      }).join('');
+    } catch (e) {
+      clearTimeout(timeoutId);
+      showMessage(FALLBACK);
+    }
   }
-  grid.innerHTML = r.data.map(function(item) {
-    return '<div class="gal-item"><img src="' + item.photo_url + '" alt=""><p>' + (item.caption || '') + '</p></div>';
-  }).join('');
-}
-loadGal();
+  loadGal();
+})();
 </script>
 </body>
 </html>
