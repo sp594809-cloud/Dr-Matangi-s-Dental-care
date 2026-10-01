@@ -737,3 +737,44 @@ img[data-slot] {
     padding: 10px 12px;
   }
 }
+
+
+/* Float buttons: never cover footer */
+.float-btns {
+  bottom: 24px !important;
+  right: 16px !important;
+  z-index: 40;
+  gap: 12px !important;
+}
+body {
+  padding-bottom: 100px;
+}
+.footer {
+  padding-bottom: 100px !important;
+}
+@media (max-width: 768px) {
+  body { padding-bottom: 110px; }
+  .footer { padding-bottom: 110px !important; }
+  .float-btns { bottom: 20px !important; right: 12px !important; }
+  /* Hero: photo first on mobile for trust */
+  .hero-with-photo {
+    display: flex !important;
+    flex-direction: column;
+  }
+  .hero-with-photo .hero-right {
+    order: -1;
+  }
+  .hero-with-photo .hero-left {
+    padding-top: 24px;
+  }
+  .hero-btns-secondary {
+    width: 100%;
+  }
+  .hero-btns-secondary .btn {
+    flex: 1;
+    text-align: center;
+  }
+  .btn-hero-primary {
+    width: 100%;
+  }
+}
