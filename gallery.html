@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Before & After Gallery | Smruti Dental, New Ranip Ahmedabad</title>
-<meta name="description" content="Before and after dental treatment results at Smruti Multispeciality Dental Clinic & Implant Center, New Ranip, Ahmedabad. Patient photos shared with consent.">
-<meta property="og:title" content="Gallery | Smruti Dental, New Ranip">
-<meta property="og:description" content="Before and after treatment results from Smruti Dental Clinic, New Ranip, Ahmedabad.">
+<title>Before & After Gallery | Matangi Dental, New Ranip Ahmedabad</title>
+<meta name="description" content="Before and after dental treatment results at Dr. Matangi's Dental Care, New Ranip, Ahmedabad. Patient photos shared with consent.">
+<meta property="og:title" content="Gallery | Matangi Dental, New Ranip">
+<meta property="og:description" content="Before and after treatment results from Matangi Dental Clinic, New Ranip, Ahmedabad.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="images/hero-clinic.jpg">
 <link rel="icon" href="images/logo.png" type="image/jpeg">
@@ -20,7 +20,7 @@
 <section class="section">
   <div class="wrap">
     <h1 style="font-size:1.75rem;font-weight:800;color:var(--blue-dk);margin-bottom:8px;">Before &amp; After Gallery</h1>
-    <p class="sub">Treatment results from Smruti Multispeciality Dental Clinic &amp; Implant Center, New Ranip.</p>
+    <p class="sub">Treatment results from Dr. Matangi's Dental Care, New Ranip.</p>
     <p class="gallery-note">Photos are shared with patient consent. Individual results vary. Treatment plans are confirmed after examination.</p>
     <div class="gal-grid" id="galleryGrid" role="status" aria-live="polite">
       <p style="color:#666;">Loading photos…</p>
@@ -44,7 +44,7 @@
     if (done) return;
     done = true;
     grid.innerHTML = '<p style="color:#666;grid-column:1/-1;">' + msg + '</p>' +
-      '<p style="grid-column:1/-1;margin-top:12px;"><a class="btn btn-primary" href="tel:+919510358056">Call +91 95103 58056</a> ' +
+      '<p style="grid-column:1/-1;margin-top:12px;"><a class="btn btn-primary" href="#contact">Call [ADD PHONE]</a> ' +
       '<a class="btn btn-outline" href="contact.html">Contact</a></p>';
   }
   var timeoutId = setTimeout(function () {
@@ -59,7 +59,7 @@
       done = true;
       grid.innerHTML = r.data.map(function (item) {
         var cap = (item.caption || 'Treatment result').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        return '<div class="gal-item"><img src="' + (item.photo_url || '') + '" alt="' + cap + ' — Smruti Dental New Ranip" loading="lazy" width="400" height="300"><p>' + cap + '</p></div>';
+        return '<div class="gal-item"><img src="' + (item.photo_url || '') + '" alt="' + cap + ' — Matangi Dental New Ranip" loading="lazy" width="400" height="300"><p>' + cap + '</p></div>';
       }).join('');
     } catch (e) {
       clearTimeout(timeoutId);
