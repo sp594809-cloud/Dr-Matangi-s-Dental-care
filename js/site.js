@@ -59,7 +59,7 @@
         header.innerHTML =
           '<div class="wrap">' +
           '<a href="index.html" class="logo" id="logoClick">' +
-          '<img src="images/logo.png" alt="Dr. Matangi's Dental Care logo" width="40" height="40">' +
+          '<img src="images/logo.png" alt="Dr. Matangi\'s Dental Care logo" width="40" height="40">' +
           ' Matangi Dental</a>' +
           '<nav class="nav" aria-label="Main">' +
           navLink('index.html', 'Home', cur) +
@@ -80,7 +80,7 @@
           '<div class="wrap">' +
           '<div class="footer-grid">' +
           '<div><h4>Matangi Dental</h4>' +
-          '<p>Dr. Matangi's Dental Care — Multispeciality Dental Clinic</p>' +
+          '<p>Dr. Matangi\'s Dental Care — Multispeciality Dental Clinic</p>' +
           '<p>Dr. Matangi Thaker Patel, BDS, MDS</p>' +
           '<p class="footer-note">Sunday closed. <a href="tel:' + PHONE1 + '">' + PHONE1_DISPLAY + '</a>.</p>' +
           '</div>' +
@@ -101,7 +101,7 @@
           '<p>Mon–Sat: 9:30 AM–1:30 PM<br>4:00 PM–8:00 PM</p>' +
           '<p>Sunday closed</p></div>' +
           '</div>' +
-          '<div class="footer-bottom">© 2026 Dr. Matangi's Dental Care — Multispeciality Dental Clinic · New Ranip, Ahmedabad</div>' +
+          '<div class="footer-bottom">© 2026 Dr. Matangi\'s Dental Care — Multispeciality Dental Clinic · New Ranip, Ahmedabad</div>' +
           '</div>';
       }
 
