@@ -1,12 +1,12 @@
 /* Shared header/footer + helpers for Matangi Dental */
 (function () {
-  var PHONE1 = ''; // TODO: add clinic phone
-  var PHONE1_DISPLAY = 'Add phone';
+  var PHONE1 = '+918511031355';
+  var PHONE1_DISPLAY = '+91 85110 31355';
   var PHONE2 = '';
   var PHONE2_DISPLAY = '';
-  var WA = ''; // TODO: WhatsApp number without +
-  var EMAIL = ''; // TODO: clinic email
-  var ADDRESS = 'New Ranip, Ahmedabad'; // TODO: full street address
+  var WA = '918511031355';
+  var EMAIL = '';
+  var ADDRESS = 'FF-135, Ratnadeep Flora, near Smruti circle, opposite Ashray gold flats, New Ranip, Ahmedabad, Gujarat 382470';
 
   function pathBase() {
     var p = window.location.pathname;
@@ -108,8 +108,9 @@
       // Float buttons
       var floats = document.getElementById('site-floats');
       if (floats) {
-        var waBtn = WA ? ('<a href="https://wa.me/' + WA + '?text=' +
-          encodeURIComponent('Hi, I want to book an appointment at Matangi Dental.') +
+        floats.innerHTML =
+          '<a href="https://wa.me/' + WA + '?text=' +
+          encodeURIComponent('Hi, I want to book an appointment at Dr. Matangi\'s Dental Care.') +
           '" class="float-wa" target="_blank" rel="noopener" title="WhatsApp" aria-label="WhatsApp">💬</a>' +
           '<a href="book.html" class="float-book" title="Book appointment" aria-label="Book appointment">BOOK</a>';
       }
