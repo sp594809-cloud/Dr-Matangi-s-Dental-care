@@ -56,10 +56,15 @@
       }
 
       if (header) {
+        var logoSrc = 'images/logo.png';
+        try {
+          var cm = JSON.parse(localStorage.getItem('matangi_cms_slots_v1') || '{}');
+          if (cm.site_logo && cm.site_logo.photo_url) logoSrc = cm.site_logo.photo_url;
+        } catch (e0) {}
         header.innerHTML =
           '<div class="wrap">' +
           '<a href="index.html" class="logo" id="logoClick">' +
-          '<img src="images/logo.png" alt="Dr. Matangi\'s Dental Care logo" width="40" height="40">' +
+          '<img src="' + logoSrc + '" alt="Dr. Matangi\'s Dental Care logo" width="40" height="40">' +
           ' Matangi Dental</a>' +
           '<nav class="nav" aria-label="Main">' +
           navLink('index.html', 'Home', cur) +

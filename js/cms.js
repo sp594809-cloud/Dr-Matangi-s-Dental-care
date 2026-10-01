@@ -6,6 +6,24 @@
  */
 (function () {
   var CACHE_KEY = 'matangi_cms_slots_v1';
+  /* IMMEDIATE_CACHE_PAINT */
+  try {
+    var __early = JSON.parse(localStorage.getItem(CACHE_KEY) || '{}');
+    if (__early && typeof document !== 'undefined') {
+      var __paint = function () {
+        document.querySelectorAll('img[data-slot]').forEach(function (img) {
+          var key = img.getAttribute('data-slot');
+          var row = __early[key];
+          if (row && row.photo_url && img.getAttribute('src') !== row.photo_url) {
+            img.src = row.photo_url;
+          }
+        });
+      };
+      __paint();
+      document.addEventListener('DOMContentLoaded', __paint);
+    }
+  } catch (e) {}
+
 
   var SLOT_DEFAULTS = {
     site_logo: { mode: 'contain', pos: 'center center' },
