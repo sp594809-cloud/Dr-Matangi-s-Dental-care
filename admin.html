@@ -180,12 +180,13 @@ create policy "Auth all site_images" on public.site_images for all using (auth.r
 <script src="js/supabase-config.js"></script>
 <script>
 var SLOTS = [
-  { key: 'home_hero', label: 'Home — Hero' },
-  { key: 'home_doctor', label: 'Home — Doctor' },
-  { key: 'home_clinic1', label: 'Home — Clinic 01' },
-  { key: 'home_clinic2', label: 'Home — Clinic 02' },
-  { key: 'about_main', label: 'About — Main' },
-  { key: 'about_side', label: 'About — Side' }
+  { key: 'site_logo', label: 'Website Logo (header — all pages)' },
+  { key: 'home_hero', label: 'Home — Hero / Clinic front' },
+  { key: 'home_doctor', label: 'Home — Doctor portrait area' },
+  { key: 'home_clinic1', label: 'Home — Clinic story 01' },
+  { key: 'home_clinic2', label: 'Home — Clinic story 02' },
+  { key: 'about_main', label: 'About — Main photo' },
+  { key: 'about_side', label: 'About — Side photo' }
 ];
 var slotData = {};
 

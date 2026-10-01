@@ -130,6 +130,30 @@
           setTimeout(function () { clicks = 0; }, 2500);
         });
       }
+
+      // Load logo from Admin CMS (slot: site_logo)
+      this.loadLogoFromCms();
+    },
+
+
+    loadLogoFromCms: async function () {
+      try {
+        if (!window.sb) return;
+        var r = await sb.from('site_images').select('photo_url, alt_text').eq('slot_key', 'site_logo').maybeSingle();
+        if (r.error) {
+          console.warn('logo cms', r.error.message);
+          return;
+        }
+        if (r.data && r.data.photo_url) {
+          var img = document.querySelector('.logo img');
+          if (img) {
+            img.src = r.data.photo_url;
+            if (r.data.alt_text) img.alt = r.data.alt_text;
+          }
+        }
+      } catch (e) {
+        console.warn('logo load', e);
+      }
     },
 
     getQueryParam: function (name) {

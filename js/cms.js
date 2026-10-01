@@ -1,10 +1,11 @@
 /**
  * Smruti CMS — images come from Admin / Supabase, not hard-coded.
- * Slot keys: home_hero, home_doctor, home_clinic1, home_clinic2,
+ * Slot keys: site_logo, home_hero, home_doctor, home_clinic1, home_clinic2,
  *            about_main, about_side, gallery items via gallery table
  */
 (function () {
   var SLOT_DEFAULTS = {
+    site_logo: { mode: 'contain', pos: 'center center' },
     home_hero: { mode: 'cover', pos: 'center center' },
     home_doctor: { mode: 'contain', pos: 'center top' },
     home_clinic1: { mode: 'natural', pos: 'center center' },
