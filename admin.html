@@ -334,7 +334,21 @@ async function saveSlot(key) {
   var payload = { slot_key: key, photo_url: photoUrl, display_mode: mode, object_position: 'center center', updated_at: new Date().toISOString() };
   var r = await sb.from('site_images').upsert(payload, { onConflict: 'slot_key' });
   if (r.error) { st.textContent = r.error.message; st.style.color = 'red'; }
-  else { st.textContent = 'Saved'; st.style.color = 'green'; slotData[key] = payload; }
+  else {
+    st.textContent = 'Saved'; st.style.color = 'green';
+    slotData[key] = payload;
+    try {
+      var raw = localStorage.getItem('matangi_cms_slots_v1');
+      var map = raw ? JSON.parse(raw) : {};
+      map[key] = {
+        photo_url: payload.photo_url,
+        alt_text: '',
+        display_mode: payload.display_mode || 'natural',
+        object_position: payload.object_position || 'center center'
+      };
+      localStorage.setItem('matangi_cms_slots_v1', JSON.stringify(map));
+    } catch (e) {}
+  }
 }
 
 async function uploadBA() {

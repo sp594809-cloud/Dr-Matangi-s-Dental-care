@@ -614,3 +614,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   background: var(--brand-soft) !important;
   color: var(--brand-dk) !important;
 }
+
+/* CMS: avoid harsh flash when src updates */
+img[data-slot] {
+  transition: opacity 0.2s ease;
+}
