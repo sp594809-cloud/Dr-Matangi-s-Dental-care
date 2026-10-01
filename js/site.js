@@ -59,7 +59,7 @@
         header.innerHTML =
           '<div class="wrap">' +
           '<a href="index.html" class="logo" id="logoClick">' +
-          '<img src="images/logo.jpg" alt="Smruti Multispeciality Dental Clinic logo" width="40" height="40">' +
+          '<img src="images/logo.png" alt="Smruti Multispeciality Dental Clinic logo" width="40" height="40">' +
           ' SMRUTI Dental</a>' +
           '<nav class="nav" aria-label="Main">' +
           navLink('index.html', 'Home', cur) +
